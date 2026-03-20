@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paddy Space — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8d5a3;
+      --gold-dim: #7a5f28;
+      --ink: #0a0804;
+      --ink-2: #13100a;
+      --ink-3: #1a160e;
+      --parchment: #f5efe4;
+      --parchment-2: #ede4d2;
+      --smoke: rgba(201,168,76,0.08);
+      --border: rgba(201,168,76,.12);
+      --success: #2ecc71;
+      --warning: #f39c12;
+      --danger: #e74c3c;
+      --info: #3498db;
+      --sidebar-w: 260px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      background: var(--ink);
+      color: var(--parchment);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ---- SIDEBAR ---- */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--ink-2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 50;
+      transition: transform .3s ease;
+    }
+    .sidebar-logo {
+      padding: 2rem 1.8rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 300;
+      letter-spacing: .1em; color: var(--gold);
+      text-decoration: none;
+    }
+    .sidebar-logo a span { font-style: italic; color: var(--gold-light); }
+    .sidebar-logo .admin-badge {
+      font-size: .55rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--gold-dim); margin-top: .3rem;
+    }
+    .sidebar-nav { flex: 1; padding: 1.5rem 0; overflow-y: auto; }
+    .nav-section-label {
+      font-size: .55rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--gold-dim); padding: .8rem 1.8rem .4rem;
+    }
+    .sidebar-link {
+      display: flex; align-items: center; gap: .9rem;
+      padding: .75rem 1.8rem;
+      color: rgba(245,239,228,.5);
+      text-decoration: none; font-size: .78rem;
+      letter-spacing: .04em;
+      border-left: 2px solid transparent;
+      transition: all .2s;
+      cursor: pointer;
+    }
+    .sidebar-link:hover { color: var(--parchment); background: var(--smoke); }
+    .sidebar-link.active {
+      color: var(--gold); background: rgba(201,168,76,.06);
+      border-left-color: var(--gold);
+    }
+    .sidebar-link .ico { width: 16px; text-align: center; font-size: .9rem; opacity: .7; }
+    .sidebar-link .badge {
+      margin-left: auto; background: var(--gold); color: var(--ink);
+      font-size: .55rem; font-weight: 500; padding: .15rem .5rem;
+      letter-spacing: .05em;
+    }
+    .sidebar-footer {
+      padding: 1.5rem 1.8rem;
+      border-top: 1px solid var(--border);
+      font-size: .72rem; color: rgba(245,239,228,.35);
+    }
+    .sidebar-user { display: flex; align-items: center; gap: .8rem; margin-bottom: .8rem; }
+    .user-avatar {
+      width: 32px; height: 32px;
+      background: var(--smoke); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--gold); font-size: .9rem;
+    }
+    .user-info .name { color: var(--parchment); font-size: .75rem; }
+    .user-info .role { font-size: .6rem; letter-spacing: .1em; color: var(--gold-dim); text-transform: uppercase; }
+
+    /* ---- MAIN ---- */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ---- TOPBAR ---- */
+    .topbar {
+      background: var(--ink-2);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 40;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .page-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 300; color: var(--parchment);
+    }
+    .page-breadcrumb {
+      font-size: .65rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--gold-dim);
+    }
+    .topbar-right { display: flex; align-items: center; gap: 1.5rem; }
+    .topbar-btn {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--parchment-2); padding: .5rem 1.2rem;
+      font-family: 'Jost', sans-serif; font-size: .65rem;
+      letter-spacing: .12em; text-transform: uppercase;
+      cursor: pointer; transition: all .2s;
+    }
+    .topbar-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .topbar-btn.primary { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+    .topbar-btn.primary:hover { background: var(--gold-light); }
+    .notif-bell {
+      position: relative; cursor: pointer;
+      font-size: 1rem; color: rgba(245,239,228,.4);
+      transition: color .2s;
+    }
+    .notif-bell:hover { color: var(--gold); }
+    .notif-dot {
+      position: absolute; top: -3px; right: -3px;
+      width: 8px; height: 8px; background: var(--danger);
+      border-radius: 50%;
+    }
+
+    /* ---- CONTENT ---- */
+    .content { padding: 2.5rem; flex: 1; }
+
+    /* ---- PANELS (views) ---- */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ---- STATS GRID ---- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+    .stat-card {
+      background: var(--ink-3);
+      padding: 1.8rem 2rem;
+    }
+    .stat-label {
+      font-size: .6rem; letter-spacing: .25em; text-transform: uppercase;
+      color: var(--gold-dim); margin-bottom: .8rem;
+    }
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem; font-weight: 300; color: var(--parchment);
+      line-height: 1; margin-bottom: .5rem;
+    }
+    .stat-sub { font-size: .7rem; color: rgba(245,239,228,.35); }
+    .stat-trend {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-size: .6rem; margin-top: .4rem;
+    }
+    .stat-trend.up { color: var(--success); }
+    .stat-trend.down { color: var(--danger); }
+
+    /* ---- SECTION HEADER ---- */
+    .section-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .section-hd h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 300; color: var(--parchment);
+    }
+    .section-hd h2 em { font-style: italic; color: var(--gold-light); }
+
+    /* ---- TABLES ---- */
+    .table-wrap {
+      background: var(--ink-3);
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      margin-bottom: 2.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { border-bottom: 1px solid var(--border); }
+    thead th {
+      padding: .9rem 1.2rem;
+      font-size: .58rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--gold-dim); font-weight: 400; text-align: left;
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid rgba(201,168,76,.05);
+      transition: background .15s;
+    }
+    tbody tr:hover { background: var(--smoke); }
+    tbody td { padding: 1rem 1.2rem; font-size: .78rem; color: rgba(245,239,228,.7); }
+    .td-name { color: var(--parchment); font-size: .82rem; }
+    .td-room { color: var(--gold-dim); font-size: .72rem; letter-spacing: .05em; }
+
+    /* ---- STATUS PILLS ---- */
+    .pill {
+      display: inline-block;
+      padding: .2rem .75rem;
+      font-size: .55rem; letter-spacing: .15em; text-transform: uppercase;
+    }
+    .pill-confirmed { background: rgba(46,204,113,.1); color: #2ecc71; border: 1px solid rgba(46,204,113,.25); }
+    .pill-pending { background: rgba(243,156,18,.1); color: #f39c12; border: 1px solid rgba(243,156,18,.25); }
+    .pill-cancelled { background: rgba(231,76,60,.1); color: #e74c3c; border: 1px solid rgba(231,76,60,.25); }
+    .pill-checkedin { background: rgba(201,168,76,.12); color: var(--gold); border: 1px solid var(--gold-dim); }
+    .pill-available { background: rgba(46,204,113,.1); color: #2ecc71; border: 1px solid rgba(46,204,113,.2); }
+    .pill-occupied { background: rgba(201,168,76,.12); color: var(--gold); border: 1px solid var(--gold-dim); }
+    .pill-maintenance { background: rgba(52,152,219,.1); color: #3498db; border: 1px solid rgba(52,152,219,.25); }
+
+    /* ---- ACTION BTNS ---- */
+    .act-btn {
+      background: transparent; border: 1px solid var(--border);
+      color: rgba(245,239,228,.5);
+      padding: .3rem .8rem; font-size: .6rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none; display: inline-block;
+      cursor: pointer; font-family: 'Jost', sans-serif;
+      transition: all .2s;
+    }
+    .act-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .act-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
+    .act-btn-icon { display: inline-flex; align-items: center; gap: .3rem; }
+    .act-btn svg { flex-shrink: 0; }
+    .act-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* ---- GRID 2COL ---- */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
+
+    /* ---- CARD ---- */
+    .card {
+      background: var(--ink-3);
+      border: 1px solid var(--border);
+      padding: 1.8rem;
+    }
+    .card-title {
+      font-size: .62rem; letter-spacing: .25em; text-transform: uppercase;
+      color: var(--gold-dim); margin-bottom: 1.2rem;
+    }
+
+    /* ---- OCCUPANCY CHART ---- */
+    .occ-bar-wrap { display: flex; flex-direction: column; gap: .85rem; }
+    .occ-row { display: flex; align-items: center; gap: 1rem; }
+    .occ-label { font-size: .72rem; min-width: 90px; color: rgba(245,239,228,.6); }
+    .occ-track { flex: 1; height: 6px; background: rgba(201,168,76,.08); }
+    .occ-fill { height: 100%; background: var(--gold); transition: width .8s ease; }
+    .occ-fill.low { background: rgba(231,76,60,.5); }
+    .occ-fill.med { background: rgba(243,156,18,.6); }
+    .occ-pct { font-size: .7rem; color: var(--gold-dim); min-width: 36px; text-align: right; }
+
+    /* ---- REVENUE CHART ---- */
+    .rev-chart { display: flex; align-items: flex-end; gap: .5rem; height: 120px; padding-top: 1rem; }
+    .rev-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: .4rem; }
+    .rev-bar {
+      width: 100%; background: rgba(201,168,76,.15);
+      position: relative; transition: background .2s;
+      cursor: pointer;
+    }
+    .rev-bar:hover { background: rgba(201,168,76,.3); }
+    .rev-bar::after {
+      content: attr(data-val);
+      position: absolute; top: -1.4rem; left: 50%; transform: translateX(-50%);
+      font-size: .58rem; color: var(--gold-dim); white-space: nowrap;
+      opacity: 0; transition: opacity .2s;
+    }
+    .rev-bar:hover::after { opacity: 1; }
+    .rev-bar.current { background: rgba(201,168,76,.5); }
+    .rev-month { font-size: .55rem; color: rgba(245,239,228,.3); letter-spacing: .05em; }
+
+    /* ---- ACTIVITY FEED ---- */
+    .activity-list { display: flex; flex-direction: column; }
+    .activity-item {
+      display: flex; gap: 1rem; padding: .9rem 0;
+      border-bottom: 1px solid rgba(201,168,76,.05);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .act-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+    }
+    .act-dot.green { background: var(--success); }
+    .act-dot.gold { background: var(--gold); }
+    .act-dot.red { background: var(--danger); }
+    .act-dot.blue { background: var(--info); }
+    .act-text { font-size: .75rem; line-height: 1.5; color: rgba(245,239,228,.6); }
+    .act-text strong { color: var(--parchment); font-weight: 400; }
+    .act-time { font-size: .6rem; color: rgba(245,239,228,.3); margin-top: .15rem; letter-spacing: .05em; }
+
+    /* ---- ROOM GRID ---- */
+    .rooms-admin-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+      background: var(--border); border: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+    .room-tile {
+      background: var(--ink-3); padding: 1.4rem;
+      cursor: pointer; transition: background .2s;
+    }
+    .room-tile:hover { background: var(--smoke); }
+    .room-tile-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; color: var(--parchment);
+      margin-bottom: .3rem;
+    }
+    .room-tile-type { font-size: .6rem; letter-spacing: .15em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: .6rem; }
+    .room-tile-guest { font-size: .72rem; color: rgba(245,239,228,.45); margin-top: .5rem; }
+    .room-tile-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: .3rem; }
+    .room-tile-actions { display: flex; gap: .3rem; opacity: 0; transition: opacity .2s; }
+    .room-tile:hover .room-tile-actions { opacity: 1; }
+    .room-tile-btn {
+      background: transparent; border: 1px solid rgba(201,168,76,.15);
+      color: rgba(245,239,228,.4); width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .2s; padding: 0;
+    }
+    .room-tile-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .room-tile-btn--del:hover { border-color: var(--danger) !important; color: var(--danger) !important; }
+    .room-tile-btn--toggle:hover { border-color: var(--warning) !important; color: var(--warning) !important; }
+
+    /* ---- FORM ELEMENTS ---- */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-row { display: flex; flex-direction: column; gap: .4rem; }
+    .form-row.full { grid-column: span 2; }
+    .form-label { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-dim); }
+    .form-input {
+      background: var(--ink); border: 1px solid var(--border);
+      color: var(--parchment); padding: .7rem 1rem;
+      font-family: 'Jost', sans-serif; font-size: .8rem;
+      outline: none; transition: border-color .2s;
+      width: 100%;
+    }
+    .form-input:focus { border-color: var(--gold-dim); }
+    .form-input option { background: var(--ink); }
+    .form-actions { display: flex; gap: 1rem; margin-top: 1.5rem; }
+
+    /* ---- SEARCH BAR ---- */
+    .search-bar {
+      display: flex; gap: 1rem; align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .search-input {
+      background: var(--ink-3); border: 1px solid var(--border);
+      color: var(--parchment); padding: .65rem 1.2rem;
+      font-family: 'Jost', sans-serif; font-size: .78rem;
+      outline: none; flex: 1; max-width: 360px;
+      transition: border-color .2s;
+    }
+    .search-input:focus { border-color: var(--gold-dim); }
+    .search-input::placeholder { color: rgba(245,239,228,.25); }
+    .filter-select {
+      background: var(--ink-3); border: 1px solid var(--border);
+      color: rgba(245,239,228,.6); padding: .65rem 1rem;
+      font-family: 'Jost', sans-serif; font-size: .72rem;
+      outline: none; cursor: pointer;
+    }
+
+    /* ---- TOAST ---- */
+    #admin-toast-container {
+      position: fixed; bottom: 2rem; right: 2rem;
+      z-index: 600; display: flex; flex-direction: column; gap: .75rem;
+    }
+    .toast-item {
+      display: flex; align-items: flex-start; gap: .85rem;
+      background: rgba(13,10,5,.97); border: 1px solid rgba(201,168,76,.2);
+      padding: 1rem 1.4rem; min-width: 280px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.6);
+      opacity: 0; transform: translateX(20px);
+      transition: opacity .35s, transform .35s;
+    }
+    .toast-item.show { opacity: 1; transform: translateX(0); }
+    .toast-item.hide { opacity: 0; transform: translateX(20px); }
+    .toast-icon { width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .6rem; flex-shrink: 0; margin-top: 2px; }
+    .toast-icon.success { background: var(--gold); color: var(--ink); }
+    .toast-icon.error { background: #c0392b; color: #fff; }
+    .toast-icon.info { border: 1px solid var(--gold-dim); color: var(--gold); }
+    .toast-body .toast-title { font-size: .63rem; letter-spacing: .15em; text-transform: uppercase; color: var(--parchment); margin-bottom: .2rem; }
+    .toast-body .toast-msg { font-size: .73rem; color: rgba(245,239,228,.55); line-height: 1.5; }
+
+    /* ---- MODAL ---- */
+    .adm-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.7);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all .3s;
+    }
+    .adm-modal-overlay.open { opacity: 1; visibility: visible; }
+    .adm-modal {
+      background: var(--ink-2); border: 1px solid var(--border);
+      width: 100%; max-width: 560px; padding: 2.5rem;
+      position: relative; transform: translateY(20px);
+      transition: transform .3s;
+    }
+    .adm-modal-overlay.open .adm-modal { transform: translateY(0); }
+    .adm-modal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300; color: var(--parchment); margin-bottom: .4rem; }
+    .adm-modal-sub { font-size: .75rem; color: rgba(245,239,228,.4); margin-bottom: 2rem; }
+    .adm-modal-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; color: rgba(245,239,228,.4); font-size: 1rem; cursor: pointer; transition: color .2s; }
+    .adm-modal-close:hover { color: var(--parchment); }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 1200px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .rooms-admin-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-row.full { grid-column: span 1; }
+      .rooms-admin-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <a href="index.html">Paddy <span>Space</span></a>
+    <div class="admin-badge">Administration Panel</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <a class="sidebar-link active" onclick="showPanel('dashboard')">
+      <span class="ico">◈</span> Dashboard
+    </a>
+    <a class="sidebar-link" onclick="showPanel('reservations')">
+      <span class="ico">◇</span> Reservations
+      <span class="badge" id="pending-badge">3</span>
+    </a>
+
+    <div class="nav-section-label">Operations</div>
+    <a class="sidebar-link" onclick="showPanel('rooms')">
+      <span class="ico">▣</span> Room Management
+    </a>
+    <a class="sidebar-link" onclick="showPanel('guests')">
+      <span class="ico">◉</span> Guests
+    </a>
+    <a class="sidebar-link" onclick="showPanel('dining')">
+      <span class="ico">◈</span> Dining & Tables
+    </a>
+
+    <div class="nav-section-label">Business</div>
+    <a class="sidebar-link" onclick="showPanel('revenue')">
+      <span class="ico">△</span> Revenue
+    </a>
+    <a class="sidebar-link" onclick="showPanel('settings')">
+      <span class="ico">◎</span> Settings
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="user-avatar">A</div>
+      <div class="user-info">
+        <div class="name">Admin User</div>
+        <div class="role">General Manager</div>
+      </div>
+    </div>
+    <a href="index.html" style="color:var(--gold-dim);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none">← View Site</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left" style="display:flex;align-items:center;gap:1rem;">
+        <span id="refresh-indicator" style="font-size:.6rem;letter-spacing:.12em;color:rgba(201,168,76,.4);text-transform:uppercase;opacity:.4">Live</span>
+      <div>
+        <div class="page-breadcrumb" id="breadcrumb">Admin / Dashboard</div>
+        <div class="page-title" id="page-title">Dashboard</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.1rem">
+        <div id="live-clock" style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--gold);letter-spacing:.06em">--:--:--</div>
+        <div id="live-date" style="font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-dim)">Loading...</div>
+      </div>
+    <div class="topbar-right">
+      <div class="notif-bell" onclick="showToast('3 new reservation requests pending approval', 'info', 'Notifications')">
+        🔔
+        <div class="notif-dot"></div>
+      </div>
+      <button class="topbar-btn primary" onclick="openNewReservation()">+ New Reservation</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="panel active" id="panel-dashboard">
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Occupancy Rate</div>
+          <div class="stat-value">--<span style="font-size:1.4rem;color:var(--gold-dim)">%</span></div>
+          <div class="stat-sub">Loading...</div>
+          <div class="stat-trend">--</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Today's Revenue</div>
+          <div class="stat-value" style="font-size:1.9rem">₦0.0M</div>
+          <div class="stat-sub">Month to Date</div>
+          <div class="stat-trend">--</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Guests</div>
+          <div class="stat-value">--</div>
+          <div class="stat-sub">In-house guests</div>
+          <div class="stat-trend">--</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending Requests</div>
+          <div class="stat-value" style="color:var(--warning)">0</div>
+          <div class="stat-sub">Reservations awaiting</div>
+          <div class="stat-trend">--</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Occupancy by Room Type -->
+        <div class="card">
+          <div class="card-title">Occupancy by Room Type</div>
+          <div class="occ-bar-wrap">
+            <div class="occ-row">
+              <div class="occ-label">Deluxe Rooms</div>
+              <div class="occ-track"><div class="occ-fill" style="width:0%"></div></div>
+              <div class="occ-pct">--</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Revenue Chart -->
+        <div class="card">
+          <div class="card-title">Monthly Revenue (₦M)</div>
+          <div class="rev-chart" id="revChart"></div>
+        </div>
+      </div>
+
+      <!-- Activity + Arrivals -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Live Activity Feed</div>
+          <div class="activity-list" id="feed-list"><!-- Dynamic --></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Today's Arrivals</div>
+          <div class="activity-list" id="arrivals-list"><!-- Dynamic --></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RESERVATIONS ===== -->
+    <div class="panel" id="panel-reservations">
+      <!-- Ref quick-lookup + search + refresh -->
+      <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1rem;flex-wrap:wrap">
+        <div style="display:flex;border:1px solid var(--border);flex:0 0 auto">
+          <span style="padding:.55rem .8rem;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+            color:var(--gold-dim);border-right:1px solid var(--border);display:flex;align-items:center;
+            white-space:nowrap;background:var(--ink-3)">Ref Code</span>
+          <input id="refSearchInput" type="text" placeholder="PS-0041"
+            style="width:110px;background:var(--ink-3);border:none;outline:none;
+                   padding:.55rem .8rem;font-family:'Cormorant Garamond',serif;
+                   font-size:1rem;color:var(--gold);letter-spacing:.1em"
+            onkeydown="if(event.key==='Enter')jumpToRef()" />
+          <button onclick="jumpToRef()" style="
+            background:var(--gold);color:var(--ink);border:none;padding:.55rem .9rem;
+            font-family:'Jost',sans-serif;font-size:.6rem;letter-spacing:.12em;
+            text-transform:uppercase;cursor:pointer">Find</button>
+        </div>
+        <button onclick="manualRefresh()" title="Refresh reservations data" style="
+            display:flex;align-items:center;gap:.4rem;
+            background:transparent;border:1px solid var(--border);
+            color:var(--gold-dim);padding:.5rem .9rem;
+            font-family:'Jost',sans-serif;font-size:.6rem;letter-spacing:.12em;
+            text-transform:uppercase;cursor:pointer;transition:all .2s;"
+          onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+          onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--gold-dim)'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+          Refresh
+        </button>
+        <div class="search-bar" style="flex:1;margin-bottom:0">
+          <input type="text" class="search-input" placeholder="Search by name, email, ref…" oninput="filterTable(this,'res-table')" />
+          <select class="filter-select" onchange="filterByStatus(this)">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="checked_in">Checked In</option>
+            <option value="checked_out">Checked Out</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <button class="topbar-btn primary" onclick="openNewReservation()">+ New Reservation</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="res-table">
+          <thead>
+            <tr>
+              <th>Ref #</th><th>Guest</th><th>Room</th>
+              <th>Check-In</th><th>Check-Out</th><th>Nights</th>
+              <th>Total</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody><!-- Populated via JS --></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== ROOMS ===== -->
+    <div class="panel" id="panel-rooms">
+      <div class="section-hd" style="margin-bottom:1rem">
+        <h2>Room <em>Overview</em></h2>
+        <div style="display:flex;align-items:center;gap:.8rem">
+          <button class="topbar-btn primary" onclick="openAddRoom()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:.4rem;vertical-align:middle"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Room
+          </button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <input type="text" class="search-input" id="room-search" placeholder="Search room #, guest name..." oninput="filterRoomGrid()" />
+        <select class="filter-select" id="room-filter" onchange="filterRoomGrid()">
+          <option value="">All Statuses</option>
+          <option value="available">Available</option>
+          <option value="occupied">Occupied</option>
+          <option value="maintenance">Maintenance</option>
+        </select>
+        <div style="display:flex;gap:.5rem;margin-left:auto;align-items:center">
+          <span class="pill pill-available" style="cursor:default;opacity:.8">● Available</span>
+          <span class="pill pill-occupied" style="cursor:default;opacity:.8">● Occupied</span>
+          <span class="pill pill-maintenance" style="cursor:default;opacity:.8">● Maintenance</span>
+        </div>
+      </div>
+      <div class="rooms-admin-grid">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+
+    <!-- ===== GUESTS ===== -->
+    <div class="panel" id="panel-guests">
+      <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Search guests…" oninput="filterTable(this,'guest-table')" />
+        <button class="topbar-btn primary" onclick="showToast('Guest creation form coming soon', 'info')">+ Add Guest</button>
+      </div>
+      <div class="table-wrap">
+        <table id="guest-table">
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Phone</th><th>Stays</th><th>Total Spend</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody><!-- Populated via JS --></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== DINING ===== -->
+    <div class="panel" id="panel-dining">
+      <div class="section-hd">
+        <h2>La <em>Salle Dorée</em> — Table Management</h2>
+        <button class="topbar-btn primary" onclick="showToast('New dining reservation form — coming soon', 'info')">+ Reserve Table</button>
+      </div>
+      <div class="stats-grid" style="margin-bottom:2rem">
+        <div class="stat-card">
+          <div class="stat-label">Covers Seated</div>
+          <div class="stat-value">--</div>
+          <div class="stat-sub">currently at table</div>
+          <div class="stat-trend">Loading…</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Confirmed Tonight</div>
+          <div class="stat-value" style="color:var(--success)">--</div>
+          <div class="stat-sub">reservations confirmed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Tables</div>
+          <div class="stat-value">--</div>
+          <div class="stat-sub">active tables</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending Requests</div>
+          <div class="stat-value" style="color:var(--warning)">--</div>
+          <div class="stat-sub">Awaiting confirmation</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="dining-table">
+          <thead><tr><th>Table</th><th>Covers</th><th>Guest</th><th>Date · Time</th><th>Occasion</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody><!-- Populated via JS --></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== REVENUE ===== -->
+    <div class="panel" id="panel-revenue">
+      <div class="stats-grid" style="margin-bottom:2rem">
+        <div class="stat-card">
+          <div class="stat-label">MTD Revenue</div>
+          <div class="stat-value" style="font-size:1.7rem">₦--</div>
+          <div class="stat-sub">Current Month</div>
+          <div class="stat-trend">--</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Room Revenue</div>
+          <div class="stat-value" style="font-size:1.7rem">₦51.2M</div>
+          <div class="stat-sub">74.9% of total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">F&B Revenue</div>
+          <div class="stat-value" style="font-size:1.7rem">₦12.1M</div>
+          <div class="stat-sub">17.7% of total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Spa & Activities</div>
+          <div class="stat-value" style="font-size:1.7rem">₦5.1M</div>
+          <div class="stat-sub">7.4% of total</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Revenue by Room Type (MTD)</div>
+          <div class="occ-bar-wrap" style="margin-top:.5rem"><!-- Dynamic --></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Monthly Revenue Trend (₦M)</div>
+          <div class="rev-chart" id="revChart2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div class="panel" id="panel-settings">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Hotel Information</div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label class="form-label">Hotel Name</label>
+              <input type="text" class="form-input" value="Paddy Space" />
+            </div>
+            <div class="form-row">
+              <label class="form-label">Phone</label>
+              <input type="text" class="form-input" value="+234 (0) 800 PADDY" />
+            </div>
+            <div class="form-row full">
+              <label class="form-label">Address</label>
+              <input type="text" class="form-input" value="1 Ocean Drive, Victoria Island, Lagos" />
+            </div>
+            <div class="form-row full">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-input" value="reservations@paddyspace.ng" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="topbar-btn primary" onclick="saveSettings()">Save Changes</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Notification Preferences</div>
+          <div style="display:flex;flex-direction:column;gap:1.2rem">
+            <label style="display:flex;align-items:center;gap:.8rem;cursor:pointer;font-size:.78rem">
+              <input type="checkbox" checked style="accent-color:var(--gold)"> New reservation requests
+            </label>
+            <label style="display:flex;align-items:center;gap:.8rem;cursor:pointer;font-size:.78rem">
+              <input type="checkbox" checked style="accent-color:var(--gold)"> Check-in / check-out alerts
+            </label>
+            <label style="display:flex;align-items:center;gap:.8rem;cursor:pointer;font-size:.78rem">
+              <input type="checkbox" style="accent-color:var(--gold)"> Daily revenue summary
+            </label>
+            <label style="display:flex;align-items:center;gap:.8rem;cursor:pointer;font-size:.78rem">
+              <input type="checkbox" checked style="accent-color:var(--gold)"> Maintenance reports
+            </label>
+            <label style="display:flex;align-items:center;gap:.8rem;cursor:pointer;font-size:.78rem">
+              <input type="checkbox" style="accent-color:var(--gold)"> Guest feedback alerts
+            </label>
+          </div>
+          <div class="form-actions">
+            <button class="topbar-btn primary" onclick="saveSettings()">Save Preferences</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- NEW RESERVATION MODAL -->
+<div class="adm-modal-overlay" id="newResModal" onclick="closeAdmModal(event)">
+  <div class="adm-modal">
+    <button class="adm-modal-close" onclick="document.getElementById('newResModal').classList.remove('open')">✕</button>
+    <div class="adm-modal-title">New Reservation</div>
+    <div class="adm-modal-sub">Create a manual reservation for walk-in or phone booking</div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-input" id="adm-first" placeholder="First name" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-input" id="adm-last" placeholder="Last name" />
+      </div>
+      <div class="form-row full">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="adm-email" placeholder="guest@email.com" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Check-In</label>
+        <input type="date" class="form-input" id="adm-ci" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Check-Out</label>
+        <input type="date" class="form-input" id="adm-co" />
+      </div>
+      <div class="form-row full">
+        <label class="form-label">Room Type</label>
+        <select class="form-input" id="adm-room">
+          <option value="" disabled selected>Select room type</option>
+          <option>Deluxe Room — ₦85,000/night</option>
+          <option>Junior Suite — ₦145,000/night</option>
+          <option>Grand Suite — ₦320,000/night</option>
+          <option>Penthouse — ₦550,000/night</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="topbar-btn primary" onclick="submitNewReservation()">Create Reservation</button>
+      <button class="topbar-btn" onclick="document.getElementById('newResModal').classList.remove('open')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- GUEST DETAIL MODAL -->
+<div class="adm-modal-overlay" id="guestDetailModal" onclick="closeGuestModal(event)">
+  <div class="adm-modal" style="max-width: 720px;">
+    <button class="adm-modal-close" onclick="document.getElementById('guestDetailModal').classList.remove('open')">✕</button>
+    <div id="guest-modal-content">
+      <!-- Dynamic guest content will be injected here -->
+    </div>
+  </div>
+</div>
+
+<!-- ROOM CREATE/EDIT MODAL -->
+<div class="adm-modal-overlay" id="roomModal" onclick="if(event.target===this)closeRoomModal()">
+  <div class="adm-modal" style="max-width:640px;max-height:90vh;overflow-y:auto">
+    <button class="adm-modal-close" onclick="closeRoomModal()" aria-label="Close">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/>
+      </svg>
+    </button>
+    <input type="hidden" id="roomEditId" />
+    <div class="adm-modal-title" id="roomModalTitle">Add New Room</div>
+    <div class="adm-modal-sub">Room details and configuration</div>
+
+    <div class="form-grid">
+      <!-- Row 1 -->
+      <div class="form-row">
+        <label class="form-label">Room Number <span style="color:var(--danger)">*</span></label>
+        <input type="text" class="form-input" id="roomNumber" placeholder="e.g. 101" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Floor <span style="color:var(--danger)">*</span></label>
+        <input type="number" class="form-input" id="roomFloor" placeholder="1" min="1" max="99" />
+      </div>
+
+      <!-- Row 2 -->
+      <div class="form-row">
+        <label class="form-label">Room Type</label>
+        <select class="form-input" id="roomType">
+          <option value="deluxe">Deluxe Room</option>
+          <option value="junior_suite">Junior Suite</option>
+          <option value="grand_suite">Grand Suite</option>
+          <option value="penthouse">Penthouse</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Base Price / Night (₦) <span style="color:var(--danger)">*</span></label>
+        <input type="number" class="form-input" id="roomPrice" placeholder="85000" min="0" />
+      </div>
+
+      <!-- Row 3 -->
+      <div class="form-row">
+        <label class="form-label">Size (m²)</label>
+        <input type="number" class="form-input" id="roomSize" placeholder="38" min="0" step="0.5" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Max Occupancy</label>
+        <input type="number" class="form-input" id="roomMaxOcc" placeholder="2" min="1" max="20" />
+      </div>
+
+      <!-- Row 4 -->
+      <div class="form-row full">
+        <label class="form-label">View</label>
+        <input type="text" class="form-input" id="roomView" placeholder="e.g. City View, Garden View, Panoramic" />
+      </div>
+
+      <!-- Row 5 -->
+      <div class="form-row full">
+        <label class="form-label">Amenities <span style="font-weight:300;text-transform:none;letter-spacing:0;color:rgba(245,239,228,.3)">(comma-separated)</span></label>
+        <input type="text" class="form-input" id="roomAmenities" placeholder="king bed, marble bath, minibar, smart TV, jacuzzi" />
+      </div>
+
+      <!-- Row 6 -->
+      <div class="form-row full">
+        <label class="form-label">Description</label>
+        <textarea class="form-input" id="roomDesc" rows="2" placeholder="Short room description for guest-facing pages..." style="resize:vertical;min-height:56px"></textarea>
+      </div>
+
+      <!-- Row 7 -->
+      <div class="form-row full">
+        <label class="form-label">Internal Notes</label>
+        <textarea class="form-input" id="roomNotes" rows="2" placeholder="Maintenance notes, staff-only info..." style="resize:vertical;min-height:56px"></textarea>
+      </div>
+    </div>
+
+    <div class="form-actions" style="margin-top:1.8rem">
+      <button class="topbar-btn primary" id="roomSubmitBtn" onclick="submitRoomForm()">Create Room</button>
+      <button class="topbar-btn" onclick="closeRoomModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="admin-toast-container"></div>
+
+
+<script src="admin.js"></script>
+</body>
+</html>

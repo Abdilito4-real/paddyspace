@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#0d0a05"/>
+      <stop offset="100%" stop-color="#1a1208"/>
+    </linearGradient>
+    <linearGradient id="gold512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#e8d5a3"/>
+      <stop offset="50%"  stop-color="#c9a84c"/>
+      <stop offset="100%" stop-color="#7a5f28"/>
+    </linearGradient>
+    <radialGradient id="glow512" cx="50%" cy="50%" r="40%">
+      <stop offset="0%"   stop-color="#c9a84c" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#c9a84c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" fill="url(#bg512)"/>
+
+  <!-- Background radial glow -->
+  <ellipse cx="256" cy="256" rx="200" ry="200" fill="url(#glow512)"/>
+
+  <!-- Outer border frame -->
+  <rect x="14"  y="14"  width="484" height="484" fill="none" stroke="#c9a84c" stroke-width="1"   opacity="0.35"/>
+  <rect x="22"  y="22"  width="468" height="468" fill="none" stroke="#c9a84c" stroke-width="0.5" opacity="0.15"/>
+
+  <!-- Corner ornaments — TL -->
+  <line x1="14"  y1="14"  x2="66"  y2="14"  stroke="#c9a84c" stroke-width="2"   opacity="0.7"/>
+  <line x1="14"  y1="14"  x2="14"  y2="66"  stroke="#c9a84c" stroke-width="2"   opacity="0.7"/>
+  <line x1="14"  y1="28"  x2="40"  y2="28"  stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+  <line x1="28"  y1="14"  x2="28"  y2="40"  stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+  <!-- TR -->
+  <line x1="498" y1="14"  x2="446" y2="14"  stroke="#c9a84c" stroke-width="2"   opacity="0.7"/>
+  <line x1="498" y1="14"  x2="498" y2="66"  stroke="#c9a84c" stroke-width="2"   opacity="0.7"/>
+  <line x1="498" y1="28"  x2="472" y2="28"  stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+  <line x1="484" y1="14"  x2="484" y2="40"  stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+  <!-- BL -->
+  <line x1="14"  y1="498" x2="66"  y2="498" stroke="#c9a84c" stroke-width="2"   opacity="0.7"/>
+  <line x1="14"  y1="498" x2="14"  y2="446" stroke="#c9a84c" stroke-width="2"   opacity="0.7"/>
+  <line x1="14"  y1="484" x2="40"  y2="484" stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+  <line x1="28"  y1="498" x2="28"  y2="472" stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+  <!-- BR -->
+  <line x1="498" y1="498" x2="446" y2="498" stroke="#c9a84c" stroke-width="2"   opacity="0.7"/>
+  <line x1="498" y1="498" x2="498" y2="446" stroke="#c9a84c" stroke-width="2"   opacity="0.7"/>
+  <line x1="498" y1="484" x2="472" y2="484" stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+  <line x1="484" y1="498" x2="484" y2="472" stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+
+  <!-- Outer geometric ring -->
+  <circle cx="256" cy="256" r="160" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.18"/>
+  <circle cx="256" cy="256" r="120" fill="none" stroke="#c9a84c" stroke-width="0.5" opacity="0.12"/>
+
+  <!-- Axis cross hair (subtle) -->
+  <line x1="96"  y1="256" x2="416" y2="256" stroke="#c9a84c" stroke-width="0.5" opacity="0.15"/>
+  <line x1="256" y1="96"  x2="256" y2="416" stroke="#c9a84c" stroke-width="0.5" opacity="0.15"/>
+
+  <!-- Outer diamond -->
+  <polygon points="256,110 390,256 256,402 122,256"
+    fill="none" stroke="url(#gold512)" stroke-width="1.2" opacity="0.5"/>
+
+  <!-- Inner diamond accent -->
+  <polygon points="256,150 340,256 256,362 172,256"
+    fill="none" stroke="#c9a84c" stroke-width="0.6" opacity="0.25"/>
+
+  <!-- Inner diamond glow fill -->
+  <polygon points="256,180 310,256 256,332 202,256"
+    fill="#c9a84c" opacity="0.04"/>
+
+  <!-- Centre dot -->
+  <circle cx="256" cy="256" r="4" fill="#c9a84c" opacity="0.5"/>
+
+  <!-- PS lettermark — large, italic, serif -->
+  <text x="164" y="300"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="110"
+    font-weight="300"
+    font-style="italic"
+    fill="url(#gold512)"
+    letter-spacing="4"
+    opacity="0.92">PS</text>
+
+  <!-- Top wordmark -->
+  <text x="256" y="86"
+    text-anchor="middle"
+    font-family="Georgia, serif"
+    font-size="14"
+    fill="#c9a84c"
+    letter-spacing="10"
+    opacity="0.45">PADDY</text>
+
+  <!-- Bottom wordmark -->
+  <text x="256" y="446"
+    text-anchor="middle"
+    font-family="Georgia, serif"
+    font-size="14"
+    fill="#c9a84c"
+    letter-spacing="10"
+    opacity="0.45">SPACE</text>
+
+  <!-- Subtitle rule lines -->
+  <line x1="116" y1="78"  x2="196" y2="78"  stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+  <line x1="316" y1="78"  x2="396" y2="78"  stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+  <line x1="116" y1="440" x2="196" y2="440" stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+  <line x1="316" y1="440" x2="396" y2="440" stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+</svg>

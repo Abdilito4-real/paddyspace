@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#0d0a05"/>
+      <stop offset="100%" stop-color="#1a1208"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#e8d5a3"/>
+      <stop offset="50%"  stop-color="#c9a84c"/>
+      <stop offset="100%" stop-color="#7a5f28"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="192" height="192" fill="url(#bgGrad)"/>
+
+  <!-- Outer border frame -->
+  <rect x="6" y="6" width="180" height="180" fill="none" stroke="#c9a84c" stroke-width="0.6" opacity="0.4"/>
+  <rect x="10" y="10" width="172" height="172" fill="none" stroke="#c9a84c" stroke-width="0.3" opacity="0.2"/>
+
+  <!-- Corner ornaments -->
+  <!-- TL -->
+  <line x1="6"   y1="6"  x2="26"  y2="6"  stroke="#c9a84c" stroke-width="1.2" opacity="0.7"/>
+  <line x1="6"   y1="6"  x2="6"   y2="26" stroke="#c9a84c" stroke-width="1.2" opacity="0.7"/>
+  <!-- TR -->
+  <line x1="186" y1="6"  x2="166" y2="6"  stroke="#c9a84c" stroke-width="1.2" opacity="0.7"/>
+  <line x1="186" y1="6"  x2="186" y2="26" stroke="#c9a84c" stroke-width="1.2" opacity="0.7"/>
+  <!-- BL -->
+  <line x1="6"   y1="186" x2="26"  y2="186" stroke="#c9a84c" stroke-width="1.2" opacity="0.7"/>
+  <line x1="6"   y1="186" x2="6"   y2="166" stroke="#c9a84c" stroke-width="1.2" opacity="0.7"/>
+  <!-- BR -->
+  <line x1="186" y1="186" x2="166" y2="186" stroke="#c9a84c" stroke-width="1.2" opacity="0.7"/>
+  <line x1="186" y1="186" x2="186" y2="166" stroke="#c9a84c" stroke-width="1.2" opacity="0.7"/>
+
+  <!-- Geometric ring -->
+  <circle cx="96" cy="96" r="58" fill="none" stroke="#c9a84c" stroke-width="0.5" opacity="0.2"/>
+  <circle cx="96" cy="96" r="42" fill="none" stroke="#c9a84c" stroke-width="0.5" opacity="0.15"/>
+
+  <!-- Diamond shape -->
+  <polygon points="96,52 130,96 96,140 62,96"
+    fill="none" stroke="url(#goldGrad)" stroke-width="1" opacity="0.6"/>
+
+  <!-- Inner diamond fill glow -->
+  <polygon points="96,68 116,96 96,124 76,96"
+    fill="#c9a84c" opacity="0.05"/>
+
+  <!-- Horizontal rule through centre -->
+  <line x1="56" y1="96" x2="136" y2="96" stroke="#c9a84c" stroke-width="0.4" opacity="0.25"/>
+  <line x1="96" y1="56" x2="96"  y2="136" stroke="#c9a84c" stroke-width="0.4" opacity="0.25"/>
+
+  <!-- PS lettermark -->
+  <!-- P -->
+  <text x="69" y="108"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="36"
+    font-weight="300"
+    font-style="italic"
+    fill="url(#goldGrad)"
+    letter-spacing="2"
+    opacity="0.95">PS</text>
+
+  <!-- Bottom wordmark -->
+  <text x="96" y="160"
+    text-anchor="middle"
+    font-family="Georgia, serif"
+    font-size="7.5"
+    fill="#c9a84c"
+    letter-spacing="4"
+    opacity="0.55">PADDY SPACE</text>
+</svg>

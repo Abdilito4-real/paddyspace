@@ -1,0 +1,64 @@
+{
+  "name": "Paddy Space",
+  "short_name": "Paddy Space",
+  "description": "Paddy Space — Where Luxury Transcends Time",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0804",
+  "theme_color": "#0a0804",
+  "orientation": "portrait-primary",
+  "lang": "en-NG",
+  "icons": [
+    {
+      "src": "icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20180%20180%22%20width%3D%22180%22%20height%3D%22180%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bgA%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20%20%20stop-color%3D%22%230d0a05%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231a1208%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22goldA%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20%20%20stop-color%3D%22%23e8d5a3%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%2250%25%22%20%20stop-color%3D%22%23c9a84c%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%237a5f28%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3CradialGradient%20id%3D%22glowA%22%20cx%3D%2250%25%22%20cy%3D%2250%25%22%20r%3D%2240%25%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20%20%20stop-color%3D%22%23c9a84c%22%20stop-opacity%3D%220.07%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23c9a84c%22%20stop-opacity%3D%220%22%2F%3E%0A%20%20%20%20%3C%2FradialGradient%3E%0A%20%20%3C%2Fdefs%3E%0A%0A%20%20%3C%21--%20Rounded%20background%20%28iOS%20style%29%20--%3E%0A%20%20%3Crect%20width%3D%22180%22%20height%3D%22180%22%20rx%3D%2238%22%20ry%3D%2238%22%20fill%3D%22url%28%23bgA%29%22%2F%3E%0A%20%20%3Cellipse%20cx%3D%2290%22%20cy%3D%2290%22%20rx%3D%2280%22%20ry%3D%2280%22%20fill%3D%22url%28%23glowA%29%22%2F%3E%0A%0A%20%20%3C%21--%20Outer%20border%20--%3E%0A%20%20%3Crect%20x%3D%226%22%20y%3D%226%22%20width%3D%22168%22%20height%3D%22168%22%20rx%3D%2233%22%20ry%3D%2233%22%0A%20%20%20%20fill%3D%22none%22%20stroke%3D%22%23c9a84c%22%20stroke-width%3D%220.6%22%20opacity%3D%220.3%22%2F%3E%0A%0A%20%20%3C%21--%20Corner%20marks%20--%3E%0A%20%20%3Cline%20x1%3D%2212%22%20%20y1%3D%2212%22%20%20x2%3D%2230%22%20%20y2%3D%2212%22%20%20stroke%3D%22%23c9a84c%22%20stroke-width%3D%221.2%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%3Cline%20x1%3D%2212%22%20%20y1%3D%2212%22%20%20x2%3D%2212%22%20%20y2%3D%2230%22%20%20stroke%3D%22%23c9a84c%22%20stroke-width%3D%221.2%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%3Cline%20x1%3D%22168%22%20y1%3D%2212%22%20%20x2%3D%22150%22%20y2%3D%2212%22%20%20stroke%3D%22%23c9a84c%22%20stroke-width%3D%221.2%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%3Cline%20x1%3D%22168%22%20y1%3D%2212%22%20%20x2%3D%22168%22%20y2%3D%2230%22%20%20stroke%3D%22%23c9a84c%22%20stroke-width%3D%221.2%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%3Cline%20x1%3D%2212%22%20%20y1%3D%22168%22%20x2%3D%2230%22%20%20y2%3D%22168%22%20stroke%3D%22%23c9a84c%22%20stroke-width%3D%221.2%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%3Cline%20x1%3D%2212%22%20%20y1%3D%22168%22%20x2%3D%2212%22%20%20y2%3D%22150%22%20stroke%3D%22%23c9a84c%22%20stroke-width%3D%221.2%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%3Cline%20x1%3D%22168%22%20y1%3D%22168%22%20x2%3D%22150%22%20y2%3D%22168%22%20stroke%3D%22%23c9a84c%22%20stroke-width%3D%221.2%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%3Cline%20x1%3D%22168%22%20y1%3D%22168%22%20x2%3D%22168%22%20y2%3D%22150%22%20stroke%3D%22%23c9a84c%22%20stroke-width%3D%221.2%22%20opacity%3D%220.6%22%2F%3E%0A%0A%20%20%3C%21--%20Outer%20ring%20--%3E%0A%20%20%3Ccircle%20cx%3D%2290%22%20cy%3D%2290%22%20r%3D%2255%22%20fill%3D%22none%22%20stroke%3D%22%23c9a84c%22%20stroke-width%3D%220.5%22%20opacity%3D%220.18%22%2F%3E%0A%0A%20%20%3C%21--%20Diamond%20--%3E%0A%20%20%3Cpolygon%20points%3D%2290%2C44%20136%2C90%2090%2C136%2044%2C90%22%0A%20%20%20%20fill%3D%22none%22%20stroke%3D%22url%28%23goldA%29%22%20stroke-width%3D%221%22%20opacity%3D%220.55%22%2F%3E%0A%0A%20%20%3C%21--%20Inner%20diamond%20glow%20--%3E%0A%20%20%3Cpolygon%20points%3D%2290%2C62%20116%2C90%2090%2C118%2064%2C90%22%0A%20%20%20%20fill%3D%22%23c9a84c%22%20opacity%3D%220.04%22%2F%3E%0A%0A%20%20%3C%21--%20Centre%20dot%20--%3E%0A%20%20%3Ccircle%20cx%3D%2290%22%20cy%3D%2290%22%20r%3D%223%22%20fill%3D%22%23c9a84c%22%20opacity%3D%220.45%22%2F%3E%0A%0A%20%20%3C%21--%20PS%20lettermark%20--%3E%0A%20%20%3Ctext%20x%3D%2247%22%20y%3D%22104%22%0A%20%20%20%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%0A%20%20%20%20font-size%3D%2242%22%0A%20%20%20%20font-weight%3D%22300%22%0A%20%20%20%20font-style%3D%22italic%22%0A%20%20%20%20fill%3D%22url%28%23goldA%29%22%0A%20%20%20%20letter-spacing%3D%222%22%0A%20%20%20%20opacity%3D%220.93%22%3EPS%3C%2Ftext%3E%0A%0A%20%20%3C%21--%20Bottom%20label%20--%3E%0A%20%20%3Ctext%20x%3D%2290%22%20y%3D%22155%22%0A%20%20%20%20text-anchor%3D%22middle%22%0A%20%20%20%20font-family%3D%22Georgia%2C%20serif%22%0A%20%20%20%20font-size%3D%227%22%0A%20%20%20%20fill%3D%22%23c9a84c%22%0A%20%20%20%20letter-spacing%3D%224%22%20opacity%3D%220.5%22%3EPADDY%20SPACE%3C%2Ftext%3E%0A%3C%2Fsvg%3E",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["travel", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Reserve a Room",
+      "short_name": "Reserve",
+      "description": "Make a new reservation at Paddy Space",
+      "url": "/?action=reserve",
+      "icons": [{ "src": "icons/badge-72.svg", "sizes": "72x72", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Fine Dining",
+      "short_name": "Dining",
+      "description": "Explore La Salle Dorée",
+      "url": "/#dining",
+      "icons": [{ "src": "icons/badge-72.svg", "sizes": "72x72", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Admin Panel",
+      "short_name": "Admin",
+      "description": "Staff administration dashboard",
+      "url": "/admin.html",
+      "icons": [{ "src": "icons/badge-72.svg", "sizes": "72x72", "type": "image/svg+xml" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Paddy Space — Luxury Hotel & Residences"
+    }
+  ]
+}
